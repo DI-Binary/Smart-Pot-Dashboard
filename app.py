@@ -19,6 +19,22 @@ st.set_page_config(
     layout="wide"
 )
 
+# ================== CSS CUSTOM ==================
+st.markdown("""
+<style>
+/* Kurangi jarak atas seluruh halaman */
+div.block-container {
+    padding-top: 0.8rem;  /* default 2-3rem, ini lebih rapat */
+}
+
+/* Kurangi jarak antar metric / header */
+h1, h2, h3 {
+    margin-top: 0.5rem;
+    margin-bottom: 0.3rem;
+}
+</style>
+""", unsafe_allow_html=True)
+
 # ================== BUFFER SHARED ==================
 class MQTTBuffer:
     def __init__(self):
@@ -186,11 +202,11 @@ with tab_analytics:
     if not st.session_state.history.empty:
         last_50 = st.session_state.history.tail(50)
         stats_50 = pd.DataFrame({
-            "rata-rata": last_50[["temperature","humidity","soil"]].mean(),
-            "min": last_50[["temperature","humidity","soil"]].min(),
-            "max": last_50[["temperature","humidity","soil"]].max(),
-            "range": last_50[["temperature","humidity","soil"]].max() - last_50[["temperature","humidity","soil"]].min(),
-            "std": last_50[["temperature","humidity","soil"]].std()
+            "Rata-rata": last_50[["temperature","humidity","soil"]].mean(),
+            "Min": last_50[["temperature","humidity","soil"]].min(),
+            "Max": last_50[["temperature","humidity","soil"]].max(),
+            "Range": last_50[["temperature","humidity","soil"]].max() - last_50[["temperature","humidity","soil"]].min(),
+            "Std": last_50[["temperature","humidity","soil"]].std()
         })
         st.dataframe(stats_50)
 
