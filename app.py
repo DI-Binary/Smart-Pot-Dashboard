@@ -180,9 +180,9 @@ with tab_dashboard:
         elif level == "WARNING":
             st.warning(suggestion_msg)
         elif level == "HIGH":
-            st.markdown(f'<p style="color:orange;font-weight:bold;">{suggestion_msg}</p>', unsafe_allow_html=True)
+            st.error(suggestion_msg)
         elif level == "CRITICAL":
-            st.markdown(f'<p style="color:red;font-weight:bold;">{suggestion_msg}</p>', unsafe_allow_html=True)
+            st.error(suggestion_msg)
         elif level == "ERROR":
             st.error(suggestion_msg)
         else:
@@ -225,3 +225,4 @@ with tab_analytics:
 # ================== FOOTER ==================
 st.divider()
 st.caption("© Dashboard Smart Pot AI • Sistem Real-Time MQTT")
+
