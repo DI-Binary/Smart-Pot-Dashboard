@@ -139,17 +139,39 @@ st_autorefresh(interval=1000, key="data_refresh")
 tab_dashboard, tab_logs, tab_analytics = st.tabs(["Dashboard", "Logs", "Analitik"])
 st.markdown("""
 <style>
-/* Garis bawah tab (indicator) */
-button[data-baseweb="tab"][aria-selected="true"]::after {
-    background-color: #1E88E5 !important;  /* BIRU */
+/* ================= TAB TEXT ================= */
+button[data-baseweb="tab"] {
+    color: #1565C0 !important;
 }
 
-/* Opsional: warna teks tab aktif */
+/* ================= TAB AKTIF ================= */
 button[data-baseweb="tab"][aria-selected="true"] {
-    color: #1E88E5 !important;
+    color: #1565C0 !important;
+}
+
+/* ================= GARIS BAWAH (ACTIVE INDICATOR) ================= */
+button[data-baseweb="tab"]::after {
+    background-color: #1565C0 !important;  /* BIRU */
+}
+
+/* ================= HOVER ================= */
+button[data-baseweb="tab"]:hover {
+    color: #0D47A1 !important;
+}
+
+/* ================= FOCUS / CLICK (INI BIANG MERAHNYA) ================= */
+button[data-baseweb="tab"]:focus {
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+/* ================= BASEWEB ACTIVE BAR ================= */
+div[data-baseweb="tab-highlight"] {
+    background-color: #1565C0 !important;
 }
 </style>
 """, unsafe_allow_html=True)
+
 
 
 # ================== TAB DASHBOARD ==================
@@ -287,6 +309,7 @@ with tab_analytics:
 # ================== FOOTER ==================
 st.divider()
 st.caption("© Dashboard Smart Pot AI • Sistem Real-Time MQTT")
+
 
 
 
