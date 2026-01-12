@@ -12,6 +12,7 @@ PORT = 1883
 
 TOPIC_SENSOR = "sic7/stage4/DI-Binary/sensor"
 TOPIC_PRED = "sic7/stage4/DI-Binary/prediction"
+TOPIC_OUTPUT = "sic7/stage4/DI-Binary/output"
 
 # ================== KONFIG HALAMAN ==================
 st.set_page_config(
@@ -40,7 +41,11 @@ class MQTTBuffer:
     def __init__(self):
         self.sensor = None
         self.prediction = "-"
-        self.queue = []  # untuk log sementara
+        self.queue = []
+        self.output = {
+            "led_color": "OFF",
+            "buzzer_on": False
+        }
 
 # ================== RESOURCE MQTT ==================
 @st.cache_resource
@@ -49,7 +54,7 @@ def start_mqtt():
 
     def on_connect(client, userdata, flags, rc):
         if rc == 0:
-            client.subscribe([(TOPIC_SENSOR, 0), (TOPIC_PRED, 0)])
+            client.subscribe([(TOPIC_SENSOR, 0), (TOPIC_PRED, 0), (TOPIC_OUTPUT, 0)])
             print("MQTT Tersambung")
         else:
             print("Koneksi MQTT gagal")
@@ -82,6 +87,15 @@ def start_mqtt():
                 buffer.prediction = payload.split(":", 1)[1].strip()
             except:
                 pass
+
+        elif msg.topic == TOPIC_OUTPUT:
+            try:
+                data = json.loads(payload)
+                buffer.output["led_color"] = data.get("led_color", "OFF")
+                buffer.output["buzzer_on"] = data.get("buzzer_on", False)
+            except Exception as e:
+                print("Gagal membaca output:", e)
+
 
     client = mqtt.Client()
     client.on_connect = on_connect
@@ -128,6 +142,13 @@ tab_dashboard, tab_logs, tab_analytics = st.tabs(["Dashboard", "Logs", "Analitik
 with tab_dashboard:
     st.title("🌱 Dashboard Smart Pot")
 
+    prediction_raw = buffer.prediction or ""
+
+    if prediction_raw.startswith("[") and "]" in prediction_raw:
+        level_end = prediction_raw.index("]")
+        level = prediction_raw[1:level_end]
+        key = prediction_raw[level_end+1:].strip()
+
     c1, c2, c3, c4 = st.columns(4)
     with c1:
         st.metric("Suhu (°C)", buffer.sensor["temperature"] if buffer.sensor else "-")
@@ -137,7 +158,18 @@ with tab_dashboard:
         st.metric("Kelembapan Tanah (%)", buffer.sensor["soil"] if buffer.sensor else "-")
     with c4:
         st.markdown("### Status Tanaman")
-        st.info(buffer.prediction if buffer.prediction else "-")
+        if level == "INFO":
+            st.info(prediction_raw)
+        elif level == "WARNING":
+            st.warning(prediction_raw)
+        elif level == "HIGH":
+            st.error(prediction_raw)
+        elif level == "CRITICAL":
+            st.error(prediction_raw)
+        elif level == "ERROR":
+            st.error(prediction_raw)
+        else:
+            st.info(prediction_raw)
 
     st.subheader("Tren Sensor")
     if not st.session_state.history.empty:
@@ -165,13 +197,8 @@ with tab_dashboard:
         "risiko_jamur": "Risiko jamur! Kelembapan tinggi dapat merusak tanaman. Tingkatkan sirkulasi udara dan hindari terlalu sering menyiram."
     }
 
-    prediction_raw = buffer.prediction or ""
 
     if prediction_raw.startswith("[") and "]" in prediction_raw:
-        level_end = prediction_raw.index("]")
-        level = prediction_raw[1:level_end]
-        key = prediction_raw[level_end+1:].strip()
-
         suggestion_msg = prediction_suggestions.get(key, "Menunggu saran...")
 
         st.subheader("Saran Tindakan")
@@ -189,6 +216,29 @@ with tab_dashboard:
             st.info(suggestion_msg)
     else:
         st.info("Menunggu prediksi...")
+    
+    st.subheader("Status Perangkat")
+
+    c5, c6 = st.columns(2)
+
+    with c5:
+        st.markdown("### LED")
+        led_color = buffer.output["led_color"]
+        st.markdown(
+            f"<div style='padding:15px;border-radius:8px;"
+            f"background-color:{led_color.lower() if led_color!='OFF' else '#ddd'};"
+            f"color:black;font-weight:bold;text-align:center;'>"
+            f"{led_color}</div>",
+            unsafe_allow_html=True
+        )
+
+    with c6:
+        st.markdown("### Buzzer")
+        if buffer.output["buzzer_on"]:
+            st.error("ON")
+        else:
+            st.success("OFF")
+
 
 # ================== TAB LOGS ==================
 with tab_logs:
@@ -225,4 +275,3 @@ with tab_analytics:
 # ================== FOOTER ==================
 st.divider()
 st.caption("© Dashboard Smart Pot AI • Sistem Real-Time MQTT")
-
