@@ -137,34 +137,6 @@ st_autorefresh(interval=1000, key="data_refresh")
 
 # ================== TABS ==================
 tab_dashboard, tab_logs, tab_analytics = st.tabs(["Dashboard", "Logs", "Analitik"])
-st.markdown("""
-<style>
-/* Tab container */
-div[data-baseweb="tab-list"] {
-    gap: 8px;
-}
-
-/* Tab default */
-button[data-baseweb="tab"] {
-    background-color: #E3F2FD;   /* biru muda */
-    color: #0D47A1;
-    border-radius: 8px;
-    padding: 6px 14px;
-    font-weight: 600;
-}
-
-/* Tab aktif */
-button[data-baseweb="tab"][aria-selected="true"] {
-    background-color: #1E88E5;  /* biru utama */
-    color: white;
-}
-
-/* Hover effect */
-button[data-baseweb="tab"]:hover {
-    background-color: #BBDEFB;
-}
-</style>
-""", unsafe_allow_html=True)
 
 # ================== TAB DASHBOARD ==================
 with tab_dashboard:
@@ -301,6 +273,7 @@ with tab_analytics:
 # ================== FOOTER ==================
 st.divider()
 st.caption("© Dashboard Smart Pot AI • Sistem Real-Time MQTT")
+
 
 
 
