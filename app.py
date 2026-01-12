@@ -220,7 +220,7 @@ with tab_dashboard:
     c5, c6 = st.columns(2)
 
     with c5:
-        st.markdown("### Status LED")
+        st.subheader("Status LED")
         led_color = buffer.output["led_color"]
         st.markdown(
             f"<div style='padding:15px;border-radius:8px;"
@@ -231,7 +231,7 @@ with tab_dashboard:
         )
 
     with c6:
-        st.markdown("### Status Buzzer")
+        st.header("Status Buzzer")
         if buffer.output["buzzer_on"]:
             st.error("ON")
         else:
@@ -273,4 +273,5 @@ with tab_analytics:
 # ================== FOOTER ==================
 st.divider()
 st.caption("© Dashboard Smart Pot AI • Sistem Real-Time MQTT")
+
 
