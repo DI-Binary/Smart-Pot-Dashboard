@@ -231,7 +231,7 @@ with tab_dashboard:
         )
 
     with c6:
-        st.header("Status Buzzer")
+        st.subheader("Status Buzzer")
         if buffer.output["buzzer_on"]:
             st.error("ON")
         else:
@@ -273,5 +273,6 @@ with tab_analytics:
 # ================== FOOTER ==================
 st.divider()
 st.caption("© Dashboard Smart Pot AI • Sistem Real-Time MQTT")
+
 
 
